@@ -31,6 +31,7 @@
     "comma-dangle": "off",
     "handle-callback-err": "off",
     "consistent-return": "off",
-    "sonarjs/no-duplicate-string": "off"
+    "sonarjs/no-duplicate-string": "off",
+    "react/prop-types": ["off"]
   }
 }
