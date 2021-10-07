@@ -8,6 +8,7 @@ export default function Input(props) {
       type={props.type}
       placeholder={props.placeholder}
       required={props.required}
+      name={props.name}
     ></input>
   );
 }
