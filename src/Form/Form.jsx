@@ -39,8 +39,8 @@ export default function Form() {
     xhr.open('POST', `/api/sendMessage?${queryString}`);
     xhr.send();
     xhr.onload = () => {
-      console.log(xhr.response);
       setLoading('false');
+      window.location.reload();
     };
   };
   return (

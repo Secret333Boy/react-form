@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
     const mail = {
       from: `"Mailer" <${process.env.GMAIL}>`,
       to: email,
-      subject: 'Hello ✔',
+      subject: `Hello, ${fName} ${sName}✔`,
       text: message,
       html: `<b>${message}</b>`,
     };
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     transporter.close();
 
     res.status(200);
-    res.json({ data: [fName, sName, email, message] });
+    res.json({ messageId: info.messageId });
   } catch (error) {
     res.status(500);
     res.send('Internal server error');
