@@ -22,14 +22,21 @@ export default function Form() {
     const email = emailInput.value;
     const message = messageInput.value;
 
+    if (!firstName) {
+      fNameInput.classList.add('requireWarning');
+      return;
+    }
+
+    if (!email) {
+      emailInput.classList.add('requireWarning');
+      return;
+    }
+
     const queryString = `fName=${firstName}&sName=${secondName}&email=${email}&message=${message}`;
 
     setLoading(true);
     const xhr = new XMLHttpRequest();
-    xhr.open(
-      'POST',
-      `${process.env.VERCEL_URL}/api/sendMessage?${queryString}`
-    );
+    xhr.open('POST', `/api/sendMessage?${queryString}`);
     xhr.send();
     xhr.onload = () => {
       console.log(xhr.response);

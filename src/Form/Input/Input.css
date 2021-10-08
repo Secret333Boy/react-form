@@ -1,4 +1,5 @@
-input.Input, textarea {
+input.Input,
+textarea {
   display: block;
   width: 100%;
   padding: 0 20px;
@@ -8,4 +9,8 @@ input.Input, textarea {
   border-width: 0;
   border-radius: 20px;
   font-family: 'Roboto', sans-serif;
+}
+
+input.Input.requireWarning:required {
+  border: 1px solid red;
 }

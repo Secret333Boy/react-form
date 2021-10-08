@@ -11,6 +11,10 @@ input[type='submit'] {
   cursor: pointer;
 }
 
+input[type='submit']:active {
+  background: #117ffd;
+}
+
 input[type='submit'][loading='true'] {
   display: none;
 }
