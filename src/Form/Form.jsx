@@ -22,19 +22,20 @@ export default function Form() {
     const email = emailInput.value;
     const message = messageInput.value;
 
-    const queryString = `fName=${firstName}&sName = ${secondName}&email=${email}&message=${message}`;
+    const queryString = `fName=${firstName}&sName=${secondName}&email=${email}&message=${message}`;
 
     setLoading(true);
     const xhr = new XMLHttpRequest();
     xhr.open(
       'POST',
       `${
-        process.env.API_URL || 'http://localhost:3000/api/'
-      }sendMessage?${queryString}`
+        process.env.VERCEL_URL || 'http://localhost:3000'
+      }/api/sendMessage?${queryString}`
     );
     xhr.send();
     xhr.onload = () => {
-      // if (xhr.status === 200) document.location.reload();
+      console.log(xhr.response);
+      setLoading('false');
     };
   };
   return (
