@@ -2,10 +2,12 @@ import React, { useRef, useState } from 'react';
 import './Form.css';
 import Input from './Input/Input.jsx';
 import SubmitButton from './SubmitButton/SubmitButton.jsx';
+import ErrorMessage from './ErrorMessage/ErrorMessage.jsx';
 
 export default function Form() {
   const form = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const sendData = (e) => {
     e.preventDefault();
@@ -40,11 +42,18 @@ export default function Form() {
     xhr.send();
     xhr.onload = () => {
       setLoading('false');
-      window.location.reload();
+      if (xhr.status === 200) {
+        window.location.reload();
+      } else {
+        setError(xhr.response);
+      }
     };
   };
   return (
     <form name="form" method="post" ref={form}>
+      <ErrorMessage hidden={!error} setError={setError}>
+        {error.toString()}
+      </ErrorMessage>
       <div className="inputWrapper">
         <Input name="fname" type="text" placeholder="First name" required />
         <Input name="sname" type="text" placeholder="Second name" />
