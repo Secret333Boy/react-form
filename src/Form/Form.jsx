@@ -28,9 +28,7 @@ export default function Form() {
     const xhr = new XMLHttpRequest();
     xhr.open(
       'POST',
-      `${
-        process.env.VERCEL_URL || 'http://localhost:3000'
-      }/api/sendMessage?${queryString}`
+      `${process.env.VERCEL_URL}/api/sendMessage?${queryString}`
     );
     xhr.send();
     xhr.onload = () => {
