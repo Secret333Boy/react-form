@@ -9,7 +9,9 @@ module.exports = async (req, res) => {
   const fName = req.query.fName;
   const sName = req.query.sName;
   const email = req.query.email;
-  const message = sanitizeHtml(req.query.message);
+  const message = sanitizeHtml(req.query.message, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+  });
 
   if (!email || !fName) {
     res.status(400);
