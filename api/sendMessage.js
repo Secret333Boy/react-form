@@ -7,16 +7,22 @@ const emailValidation = new RegExp(
 );
 
 const rateLimit = 10;
-const rateTimeReset = 10;
+const rateTimeReset = 10; //in seconds
 const rateList = {};
 
 module.exports = async (req, res) => {
   try {
     const origin = req.headers.origin;
-    if (!rateList[origin]) rateList[origin] = 0;
+    if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
 
-    rateList[origin]++;
-    if (rateList[origin] > rateLimit) {
+    if (rateList[origin].timer) {
+      clearTimeout(rateList[origin].timer);
+    }
+    rateList[origin].timer = setTimeout(() => {
+      delete rateList[origin];
+    }, rateTimeReset * 1000);
+    rateList[origin].value++;
+    if (rateList[origin].value > rateLimit) {
       res.status(429);
       res.send('Too many requests');
       return;
