@@ -1,5 +1,5 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Secret333Boy_react-form&metric=alert_status)](https://sonarcloud.io/dashboard?id=Secret333Boy_react-form)
-[![Node.js CI](https://github.com/Secret333Boy/portfolio-website/actions/workflows/node.js.yml/badge.svg)](https://github.com/Secret333Boy/portfolio-website/actions/workflows/node.js.yml)
-[![CodeQL](https://github.com/Secret333Boy/portfolio-website/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Secret333Boy/portfolio-website/actions/workflows/codeql-analysis.yml)
+[![Node.js CI](https://github.com/Secret333Boy/react-form/actions/workflows/node.js.yml/badge.svg)](https://github.com/Secret333Boy/react-form/actions/workflows/node.js.yml)
+[![CodeQL](https://github.com/Secret333Boy/react-form/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Secret333Boy/react-form/actions/workflows/codeql-analysis.yml)
 [![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=react-form-khaki)](https://react-form-khaki.vercel.app)
 [![GitHub Licence](https://img.shields.io/github/license/Secret333Boy/react-form)](https://github.com/Secret333Boy/react-form/blob/master/LICENSE)
