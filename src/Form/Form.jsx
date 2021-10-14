@@ -2,11 +2,13 @@ import React, { useRef, useState } from 'react';
 import './Form.css';
 import Input from './Input/Input.jsx';
 import SubmitButton from './SubmitButton/SubmitButton.jsx';
+import SuccessMessage from './SuccessMessage/SuccessMessage.jsx';
 import ErrorMessage from './ErrorMessage/ErrorMessage.jsx';
 
 export default function Form() {
   const form = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
   const sendData = (e) => {
@@ -43,14 +45,19 @@ export default function Form() {
     xhr.onload = () => {
       setLoading('false');
       if (xhr.status === 200) {
-        window.location.reload();
+        setError(false);
+        setSuccess('Successfully done!');
       } else {
+        setSuccess(false);
         setError(xhr.response);
       }
     };
   };
   return (
     <form name="form" method="post" ref={form}>
+      <SuccessMessage hidden={!success} setSuccess={setSuccess}>
+        {success.toString()}
+      </SuccessMessage>
       <ErrorMessage hidden={!error} setError={setError}>
         {error.toString()}
       </ErrorMessage>
