@@ -1,13 +1,12 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import './ErrorMessage.css';
 
 export default function ErrorMessage(props) {
-  const msgRef = useRef(null);
   const hideMessage = () => {
     props.setError(false);
   };
   return (
-    <div className="errorMessage" hidden={props.hidden} ref={msgRef}>
+    <div className="errorMessage" hidden={props.hidden}>
       {props.children}
       <button className="close" onClick={hideMessage}>
         х
