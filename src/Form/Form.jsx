@@ -36,12 +36,11 @@ export default function Form() {
       return;
     }
 
-    const queryString = `fName=${firstName}&sName=${secondName}&email=${email}&message=${message}`;
-
+    const body = { firstName, secondName, email, message };
     setLoading(true);
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `/api/sendMessage?${queryString}`);
-    xhr.send();
+    xhr.open('POST', `/api/sendMessage`);
+    xhr.send(JSON.stringify(body));
     xhr.onload = () => {
       setLoading('false');
       if (xhr.status === 200) {

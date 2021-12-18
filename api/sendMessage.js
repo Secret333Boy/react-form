@@ -12,7 +12,7 @@ const rateList = {};
 
 module.exports = async (req, res) => {
   try {
-    const origin = req.headers.origin;
+    const origin = req.headers['X-Forwarded-For'];
     if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
 
     if (rateList[origin].timer) {
@@ -28,14 +28,12 @@ module.exports = async (req, res) => {
       return;
     }
 
-    const fName = req.query.fName;
-    const sName = req.query.sName;
-    const email = req.query.email;
-    const message = sanitizeHtml(req.query.message, {
+    const { firstName, secondName, email } = JSON.parse(req.body);
+    const message = sanitizeHtml(req.body.message, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
     });
 
-    if (!email || !fName) {
+    if (!email || !firstName) {
       res.status(400);
       res.send('Bad request');
       return;
@@ -57,8 +55,7 @@ module.exports = async (req, res) => {
     const mail = {
       from: `"Mailer" <${process.env.GMAIL}>`,
       to: email,
-      subject: `Hello, ${fName} ${sName}✔`,
-      text: message,
+      subject: `Hello, ${firstName} ${secondName}✔`,
       html: message,
     };
 
