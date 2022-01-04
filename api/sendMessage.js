@@ -10,6 +10,14 @@ const rateLimit = 3;
 const rateTimeReset = 10; //in seconds
 const rateList = {};
 
+const transporter = nodemailer.createTransport({
+  service: 'GMAIL',
+  auth: {
+    user: process.env.GMAIL,
+    pass: process.env.GMAIL_PASS,
+  },
+});
+
 module.exports = async (req, res) => {
   try {
     const origin = req.headers['X-Forwarded-For'];
@@ -24,34 +32,26 @@ module.exports = async (req, res) => {
     rateList[origin].value++;
     if (rateList[origin].value > rateLimit) {
       res.status(429);
-      res.send('Too many requests');
+      res.json('Too many requests');
       return;
     }
 
     const { firstName, secondName, email } = JSON.parse(req.body);
-    const message = sanitizeHtml(req.body.message, {
+    const message = sanitizeHtml(JSON.parse(req.body).message, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
     });
 
     if (!email || !firstName) {
       res.status(400);
-      res.send('Bad request');
+      res.json('Bad request');
       return;
     }
 
     if (!email.match(emailValidation)) {
       res.status(400);
-      res.send('Email validation fail');
+      res.json('Email validation fail');
       return;
     }
-
-    const transporter = await nodemailer.createTransport({
-      service: 'GMAIL',
-      auth: {
-        user: process.env.GMAIL,
-        pass: process.env.GMAIL_PASS,
-      },
-    });
     const mail = {
       from: `"Mailer" <${process.env.GMAIL}>`,
       to: email,
@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
     res.json({ messageId: info.messageId });
   } catch (error) {
     res.status(500);
-    res.send('Internal server error');
+    res.json('Internal server error');
     console.error(error);
     return;
   }

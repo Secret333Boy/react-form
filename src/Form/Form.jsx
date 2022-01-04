@@ -10,16 +10,24 @@ export default function Form() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [online, setOnline] = useState(true);
+
+  window.ononline = () => {
+    setOnline(true);
+    setError(false);
+  };
+
+  window.onoffline = () => {
+    setOnline(false);
+    setError('You are offline...');
+  };
 
   const sendData = (e) => {
     e.preventDefault();
-
-    const fNameInput = form.current.querySelector('input[name="fname"]');
-    const sNameInput = form.current.querySelector('input[name="sname"]');
-    const emailInput = form.current.querySelector('input[name="email"]');
-    const messageInput = form.current.querySelector(
-      'textarea[name="textarea"]'
-    );
+    const fNameInput = form.current.elements[2];
+    const sNameInput = form.current.elements[3];
+    const emailInput = form.current.elements[4];
+    const messageInput = form.current.elements[5];
 
     const firstName = fNameInput.value;
     const secondName = sNameInput.value;
@@ -36,21 +44,28 @@ export default function Form() {
       return;
     }
 
-    const body = { firstName, secondName, email, message };
     setLoading(true);
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `/api/sendMessage`);
-    xhr.send(JSON.stringify(body));
-    xhr.onload = () => {
-      setLoading('false');
-      if (xhr.status === 200) {
-        setError(false);
-        setSuccess('Successfully done!');
-      } else {
-        setSuccess(false);
-        setError(xhr.response);
-      }
-    };
+    const body = { firstName, secondName, email, message };
+    try {
+      fetch('/api/sendMessage', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }).then(async (res) => {
+        setLoading('false');
+        if (res.status === 200) {
+          setError(false);
+          setSuccess('Successfully done!');
+        } else {
+          setSuccess(false);
+          setError(await res.json());
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      console.warn(e);
+      setSuccess(false);
+      setError(String(e));
+    }
   };
   return (
     <form name="form" method="post" ref={form}>
@@ -74,6 +89,7 @@ export default function Form() {
         placeholder="Submit"
         onClick={sendData}
         loading={loading.toString()}
+        online={online}
       />
     </form>
   );

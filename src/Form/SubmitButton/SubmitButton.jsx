@@ -3,6 +3,9 @@ import './SubmitButton.css';
 import spinner from './MkTK.gif';
 
 export default function SubmitButton(props) {
+  if (!props.online) {
+    return <div>Offline...</div>;
+  }
   if (props.loading === 'false') {
     return (
       <input
