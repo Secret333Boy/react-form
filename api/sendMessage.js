@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 const sanitizeHtml = require('sanitize-html');
 
 const emailValidation = new RegExp(
@@ -10,16 +11,44 @@ const rateLimit = 3;
 const rateTimeReset = 10; //in seconds
 const rateList = {};
 
-const transporter = nodemailer.createTransport({
-  service: 'GMAIL',
-  auth: {
-    user: process.env.GMAIL,
-    pass: process.env.GMAIL_PASS,
-  },
-});
+const clientID = process.env.clientID;
+const clientSecret = process.env.clientSecret;
+const redirectURI = process.env.redirectURI;
+const refreshToken = process.env.refreshToken;
+
+const oAuth2Client = new google.auth.OAuth2(
+  clientID,
+  clientSecret,
+  redirectURI
+);
+// eslint-disable-next-line camelcase
+oAuth2Client.setCredentials({ refresh_token: refreshToken });
+let accessToken = null;
+let transporter = null;
+const renewTransporter = async () => {
+  try {
+    accessToken = await oAuth2Client.getAccessToken();
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        type: 'OAuth2',
+        user: process.env.GMAIL,
+        clientId: clientID,
+        clientSecret,
+        refreshToken,
+        accessToken,
+      },
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+setInterval(renewTransporter, 4000 * 1000);
 
 module.exports = async (req, res) => {
   try {
+    await renewTransporter();
     const origin = req.headers['X-Forwarded-For'];
     if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
 
@@ -60,9 +89,7 @@ module.exports = async (req, res) => {
     };
 
     const info = await transporter.sendMail(mail);
-
-    console.log('Message sent: %s', info.messageId);
-    transporter.close();
+    console.log(`Message sent: ${info.messageId}`);
 
     res.status(200);
     res.json({ messageId: info.messageId });

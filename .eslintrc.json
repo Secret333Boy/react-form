@@ -9,8 +9,6 @@
     "eslint:recommended",
     "metarhia",
     "plugin:react/recommended",
-    "react-app",
-    "react-app/jest",
     "plugin:prettier/recommended"
   ],
   "parserOptions": {
