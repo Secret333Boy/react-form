@@ -65,27 +65,30 @@ module.exports = async (req, res) => {
       return;
     }
 
-    const { firstName, secondName, email } = JSON.parse(req.body);
-    const message = sanitizeHtml(JSON.parse(req.body).message, {
+    const { firstName, secondName, email, message } = JSON.parse(req.body);
+    const cleanFirstName = sanitizeHtml(firstName);
+    const cleanSecondName = sanitizeHtml(secondName);
+    const cleanEmail = sanitizeHtml(email);
+    const cleanMessage = sanitizeHtml(message, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
     });
 
-    if (!email || !firstName) {
+    if (!cleanEmail || !cleanFirstName) {
       res.status(400);
       res.json('Bad request');
       return;
     }
 
-    if (!email.match(emailValidation)) {
+    if (!cleanEmail.match(emailValidation)) {
       res.status(400);
       res.json('Email validation fail');
       return;
     }
     const mail = {
       from: `"Mailer" <${process.env.GMAIL}>`,
-      to: email,
-      subject: `Hello, ${firstName} ${secondName}✔`,
-      html: message,
+      to: cleanEmail,
+      subject: `Hello, ${cleanFirstName} ${cleanSecondName}✔`,
+      html: cleanMessage,
     };
 
     const info = await transporter.sendMail(mail);
@@ -95,8 +98,7 @@ module.exports = async (req, res) => {
     res.json({ messageId: info.messageId });
   } catch (error) {
     res.status(500);
-    res.json('Internal server error');
+    res.json(error);
     console.error(error);
-    return;
   }
 };

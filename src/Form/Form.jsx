@@ -22,47 +22,41 @@ export default function Form() {
     setError('You are offline...');
   };
 
+  const sendMessage = async (body) => {
+    const res = await fetch('/api/sendMessage', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    setLoading('false');
+    if (res.status === 200) {
+      setError(false);
+      setSuccess('Successfully done!');
+    } else {
+      setSuccess(false);
+      setError(await res.json());
+    }
+  };
+
   const sendData = (e) => {
     e.preventDefault();
-    const fNameInput = form.current.elements[2];
-    const sNameInput = form.current.elements[3];
-    const emailInput = form.current.elements[4];
-    const messageInput = form.current.elements[5];
-
-    const firstName = fNameInput.value;
-    const secondName = sNameInput.value;
-    const email = emailInput.value;
-    const message = messageInput.value;
-
-    if (!firstName) {
-      fNameInput.classList.add('requireWarning');
-      return;
-    }
-
-    if (!email) {
-      emailInput.classList.add('requireWarning');
-      return;
-    }
-
+    const [firstName, secondName, email, message] = Array.from(
+      form.current.elements
+    )
+      .map((el) => {
+        if (el.name === 'fname' && !el.value)
+          el.classList.add('requireWarning');
+        if (el.name === 'email' && !el.value)
+          el.classList.add('requireWarning');
+        return el.value;
+      })
+      .filter((el) => el);
+    if (!firstName || !email) return;
     setLoading(true);
     const body = { firstName, secondName, email, message };
     try {
-      fetch('/api/sendMessage', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      }).then(async (res) => {
-        setLoading('false');
-        if (res.status === 200) {
-          setError(false);
-          setSuccess('Successfully done!');
-        } else {
-          setSuccess(false);
-          setError(await res.json());
-        }
-      });
+      sendMessage(body);
     } catch (e) {
       console.error(e);
-      console.warn(e);
       setSuccess(false);
       setError(String(e));
     }
