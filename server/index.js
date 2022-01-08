@@ -1,3 +1,8 @@
+const express = require('express');
+const path = require('path');
+const app = express();
+require('dotenv').config();
+const port = process.env.PORT || 5050;
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const sanitizeHtml = require('sanitize-html');
@@ -46,7 +51,13 @@ const renewTransporter = async () => {
 };
 setInterval(renewTransporter, 4000 * 1000);
 
-module.exports = async (req, res) => {
+app.use(express.json());
+app.use(express.static(path.resolve(__dirname, '../client/build')));
+
+app.get('/apiIsAlive', async (req, res) => {
+  res.status(200).json({ hello: 'Hello' });
+});
+app.post('/sendMessage', async (req, res) => {
   try {
     await renewTransporter();
     const origin = req.headers['X-Forwarded-For'];
@@ -64,8 +75,7 @@ module.exports = async (req, res) => {
       res.json('Too many requests');
       return;
     }
-
-    const { firstName, secondName, email, message } = JSON.parse(req.body);
+    const { firstName, secondName, email, message } = req.body;
     const cleanFirstName = sanitizeHtml(firstName);
     const cleanSecondName = sanitizeHtml(secondName);
     const cleanEmail = sanitizeHtml(email);
@@ -101,4 +111,12 @@ module.exports = async (req, res) => {
     res.json(error);
     console.error(error);
   }
-};
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
+
+app.listen(port, () => {
+  console.log(`Server has been started on port ${port}`);
+});

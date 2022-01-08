@@ -22,21 +22,6 @@ export default function Form() {
     setError('You are offline...');
   };
 
-  const sendMessage = async (body) => {
-    const res = await fetch('/api/sendMessage', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-    setLoading('false');
-    if (res.status === 200) {
-      setError(false);
-      setSuccess('Successfully done!');
-    } else {
-      setSuccess(false);
-      setError(await res.json());
-    }
-  };
-
   const sendData = (e) => {
     e.preventDefault();
     const [firstName, secondName, email, message] = Array.from(
@@ -54,7 +39,23 @@ export default function Form() {
     setLoading(true);
     const body = { firstName, secondName, email, message };
     try {
-      sendMessage(body);
+      (async () => {
+        const res = await fetch('/sendMessage', {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        setLoading('false');
+        if (res.status === 200) {
+          setError(false);
+          setSuccess('Successfully done!');
+        } else {
+          setSuccess(false);
+          setError(await res.json());
+        }
+      })()
     } catch (e) {
       console.error(e);
       setSuccess(false);
