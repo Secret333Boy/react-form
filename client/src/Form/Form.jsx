@@ -36,7 +36,7 @@ export default function Form() {
     if (!firstName || !email) return;
     setLoading(true);
     const body = { firstName, secondName, email, message };
-    fetch('/sendMessage', {
+    fetch(process.env.REACT_APP_messageEndpoint || '/sendMessage', {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
