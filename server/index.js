@@ -72,7 +72,8 @@ app.post('/sendMessage', async (req, res) => {
     rateList[origin].value++;
     if (rateList[origin].value > rateLimit) {
       res.status(429);
-      res.json('Too many requests');
+      res.statusMessage = 'Too many requests';
+      res.send();
       return;
     }
     const { firstName, secondName, email, message } = req.body;
@@ -85,13 +86,15 @@ app.post('/sendMessage', async (req, res) => {
 
     if (!cleanEmail || !cleanFirstName) {
       res.status(400);
-      res.json('Bad request');
+      res.statusMessage = 'Bad request';
+      res.send();
       return;
     }
 
     if (!cleanEmail.match(emailValidation)) {
       res.status(400);
-      res.json('Email validation fail');
+      res.statusMessage = 'Email validation fail';
+      res.send();
       return;
     }
     const mail = {

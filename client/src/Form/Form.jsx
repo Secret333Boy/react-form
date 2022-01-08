@@ -28,9 +28,7 @@ export default function Form() {
       form.current.elements
     )
       .map((el) => {
-        if (el.name === 'fname' && !el.value)
-          el.classList.add('requireWarning');
-        if (el.name === 'email' && !el.value)
+        if (['fname', 'email'].includes(el.name) && !el.value)
           el.classList.add('requireWarning');
         return el.value;
       })
@@ -53,11 +51,12 @@ export default function Form() {
           setSuccess('Successfully done!');
         } else {
           setSuccess(false);
-          setError(await res.json());
+          setError(res.statusText);
         }
       })()
     } catch (e) {
       console.error(e);
+      setLoading(false);
       setSuccess(false);
       setError(String(e));
     }
