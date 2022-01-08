@@ -59,10 +59,8 @@ app.get('/apiIsAlive', async (req, res) => {
 });
 app.post('/sendMessage', async (req, res) => {
   try {
-    await renewTransporter();
     const origin = req.headers['X-Forwarded-For'];
     if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
-
     if (rateList[origin].timer) {
       clearTimeout(rateList[origin].timer);
     }
@@ -76,6 +74,7 @@ app.post('/sendMessage', async (req, res) => {
       res.send();
       return;
     }
+
     const { firstName, secondName, email, message } = req.body;
     const cleanFirstName = sanitizeHtml(firstName);
     const cleanSecondName = sanitizeHtml(secondName);
@@ -97,13 +96,14 @@ app.post('/sendMessage', async (req, res) => {
       res.send();
       return;
     }
+
+    await renewTransporter();
     const mail = {
       from: `"Mailer" <${process.env.GMAIL}>`,
       to: cleanEmail,
       subject: `Hello, ${cleanFirstName} ${cleanSecondName}✔`,
       html: cleanMessage,
     };
-
     const info = await transporter.sendMail(mail);
     console.log(`Message sent: ${info.messageId}`);
 
