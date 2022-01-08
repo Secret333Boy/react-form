@@ -1,7 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const app = express();
-require('dotenv').config();
+const cors = require('cors');
 const port = process.env.PORT || 5050;
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
@@ -51,6 +52,7 @@ const renewTransporter = async () => {
 };
 setInterval(renewTransporter, 4000 * 1000);
 
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
