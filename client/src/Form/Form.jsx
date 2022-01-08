@@ -36,30 +36,27 @@ export default function Form() {
     if (!firstName || !email) return;
     setLoading(true);
     const body = { firstName, secondName, email, message };
-    try {
-      (async () => {
-        const res = await fetch('/sendMessage', {
-          method: 'POST',
-          body: JSON.stringify(body),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        setLoading('false');
-        if (res.status === 200) {
-          setError(false);
-          setSuccess('Successfully done!');
-        } else {
-          setSuccess(false);
-          setError(res.statusText);
-        }
-      })()
-    } catch (e) {
+    fetch('/sendMessage', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async (res) => {
+      setLoading('false');
+      if (res.status === 200) {
+        setError(false);
+        setSuccess('Successfully done!');
+      } else {
+        setSuccess(false);
+        setError(res.statusText);
+      }
+    }).catch((e) => {
       console.error(e);
       setLoading(false);
       setSuccess(false);
       setError(String(e));
-    }
+    });
   };
   return (
     <form name="form" method="post" ref={form}>
