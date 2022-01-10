@@ -69,13 +69,13 @@ app.post('/sendMessage', async (req, res) => {
     rateList[origin].timer = setTimeout(() => {
       delete rateList[origin];
     }, rateTimeReset * 1000);
-    rateList[origin].value++;
-    if (rateList[origin].value > rateLimit) {
+    if (rateList[origin].value >= rateLimit) {
       res.status(429);
       res.statusMessage = 'Too many requests';
       res.send();
       return;
     }
+    rateList[origin].value++;
 
     const { firstName, secondName, email, message } = req.body;
     const cleanFirstName = sanitizeHtml(firstName);
