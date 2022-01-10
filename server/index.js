@@ -61,7 +61,7 @@ app.get('/apiIsAlive', async (req, res) => {
 });
 app.post('/sendMessage', async (req, res) => {
   try {
-    const origin = req.headers['X-Forwarded-For'];
+    const origin = req.headers['X-Forwarded-For'] || req.ip;
     if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
     if (rateList[origin].timer) {
       clearTimeout(rateList[origin].timer);
