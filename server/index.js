@@ -119,7 +119,7 @@ app.post('/sendMessage', async (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  res.status(404).send();
 });
 
 app.listen(port, () => {
