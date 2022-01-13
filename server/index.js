@@ -63,7 +63,6 @@ app.post('/sendMessage', async (req, res) => {
   try {
     const originIP = req.headers['X-Forwarded-For'] || req.ip;
     const data = rateList.get(originIP) || { value: 0, time: null };
-    console.log(data);
     if (data.time && Date.now() > data.time) {
       data.time = null;
       data.value = 0;
