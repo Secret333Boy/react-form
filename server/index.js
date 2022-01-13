@@ -15,7 +15,7 @@ const emailValidation = new RegExp(
 
 const rateLimit = 3;
 const rateTimeReset = 10; //in seconds
-const rateList = {};
+const rateList = new Map();
 
 const clientID = process.env.clientID;
 const clientSecret = process.env.clientSecret;
@@ -61,21 +61,20 @@ app.get('/apiIsAlive', async (req, res) => {
 });
 app.post('/sendMessage', async (req, res) => {
   try {
-    const origin = req.headers['X-Forwarded-For'] || req.ip;
-    if (!rateList[origin]?.value) rateList[origin] = { value: 0, timer: null };
-    if (rateList[origin].timer) {
-      clearTimeout(rateList[origin].timer);
+    const originIP = req.headers['X-Forwarded-For'] || req.ip;
+    const data = rateList.get(originIP) || { value: 0, time: null };
+    console.log(data);
+    if (data.time && Date.now() > data.time) {
+      data.time = null;
+      data.value = 0;
     }
-    rateList[origin].timer = setTimeout(() => {
-      delete rateList[origin];
-    }, rateTimeReset * 1000);
-    if (rateList[origin].value >= rateLimit) {
-      res.status(429);
-      res.statusMessage = 'Too many requests';
-      res.send();
+    if (data.value === rateLimit || (data.time && Date.now() < data.time)) {
+      data.time = new Date(Date.now() + rateTimeReset * 1000);
+      res.status(429).send();
       return;
     }
-    rateList[origin].value++;
+    data.value++;
+    rateList.set(originIP, data);
 
     const { firstName, secondName, email, message } = req.body;
     const cleanFirstName = sanitizeHtml(firstName);
