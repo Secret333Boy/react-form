@@ -1,0 +1,12 @@
+.errorMessage{
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+.errorMessage button{
+  margin-left: 10px;
+  cursor: pointer;
+}
